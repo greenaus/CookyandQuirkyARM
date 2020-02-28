@@ -1,4 +1,4 @@
-## Program: Command Parser
+## Program: G-code Generator
 ## Project: Junior Design ARM 09
 ## Author: Calder Wilson
 
@@ -14,7 +14,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import serial
 
 def choose_units():
     """Set units for program to be in mm or inches"""
@@ -30,55 +29,40 @@ def choose_type():
         return("G91")
     return("G90")
 
-def dot_image(f,array):
+def dot_image(array):
     """Generate g-code for a dot image from an array"""
-    f.write('G00 Z1.0\n')
+    g_code = []
     for i in range(np.size(array,axis=0)):
-        f.write('X'+str(array[i,0]))
-        f.write(' Y'+str(array[i,1])+'\n')
-        f.write('Z0.0\n')
-        f.write('Z0.1\n')
-    return
+        g_code.append('G00 X' + str(array[i,0]) + ' Y' + str(array[i,1]) + ' Z1.0')
+        g_code.append('G00 X' + str(array[i,0]) + ' Y' + str(array[i,1]) + ' Z0.0')
+    return g_code
 
-def line_image(f,array):
+def line_image(array):
     """Generate g-code for a line-image from an array"""
-    f.write('G00 Z1.0\n')
-    f.write('X'+str(array[0,0])+' Y'+str(array[0,1])+'\n')
-    f.write('G01 Z0.0\n')
-    for i in range(1,np.size(array,axis=0)):
-        f.write('X'+str(array[i,0]))
-        f.write(' Y'+str(array[i,1])+'\n')
-    f.write('Z1.0\n')
-    return
-
-def serial_comm(filename):
-    """Send g-code text file line by line over serial port"""
-    ser = serial.Serial('COM3', 9600)
-    fileIN = open(filename, "r")
-    line = fileIN.readline()
-    while line:
-        line = fileIN.readline()
-        ser.write(b(line))
-    ser.close()
-    return
+    g_code = ['G00 X' + str(array[0,0]) + ' Y' + str(array[0,1]) + ' Z1.0']
+    for i in range(0,np.size(array,axis=0)):
+        g_code.append('G01 X'+ str(array[i,0]) + ' Y' + str(array[i,1]) + ' Z0.0')
+    return g_code
 
 def main(mode,array=None):
     """Main function of the program.
-    mode = 'sound', 'image', or 'demo'
+    mode = 'sound', 'face', or 'demo'
     array = numpy array conatining x,y coordinates to be plotted"""
-
+    g_code = []     # List to hold g-code commands
     if mode == 'demo':
-        #serial_comm('demo.txt')
-        x = 1
-    else:
-        f = open('gcode.txt', 'w')
-        f.write('%\nO1000\n')
-        f.write('G20 G90\n')
-        if mode == 'sound':
-            line_image(f,array)
-        elif mode == 'image':
-            dot_image(f,array)
-        f.write('M02\n%\n')
-        f.close()
-        #serial_comm('gcode.txt')
+        with open('demo.txt') as f: # Read demo g_code from file, remove '\n'
+            g_code = f.read().splitlines()
+    elif mode == 'sound':
+        g_code = line_image(array)
+    elif mode == 'face':
+        g_code = dot_image(array)
+
+    # Print the g_code to a text file
+    f = open('gcode.txt', 'w')  #
+    f.write('%' + mode + '\n')
+    f.write('G20 G90\n')
+    for i in g_code:
+        f.write(str(i) + '\n')
+    f.write('M02\n%\n')
+    f.close()
     return
