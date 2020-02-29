@@ -65,4 +65,4 @@ def main(mode,array=None):
         f.write(str(i) + '\n')
     f.write('M02\n%\n')
     f.close()
-    return
+    return g_code

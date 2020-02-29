@@ -11,7 +11,7 @@ from math import log10
 
 def record_audio(duration,fs):
     """Take a recording of sound.
-    - duration = number of Seconds
+    - duration = number of seconds
     - fs = sampling frequency"""
 
     print("Start Recording")
@@ -22,7 +22,7 @@ def record_audio(duration,fs):
 
 def plot_signal(audio,filename):
     """Plot the signal."""
-    plt.figure(figsize=(11,8))  # Create plot  and set size in inches
+    plt.figure(figsize=(11,8))  # Create plot and set size in inches
     plt.plot(audio, color='black')  # Create a plot of the soundwave
     #plt.axis('off')  # Remove axes to leave only waveform for arm to draw
     plt.savefig('{}.png'.format(filename), transparent=True, bbox_inches=0, pad_inches=0)  # Save plot as png
@@ -33,7 +33,7 @@ def dB_calculate(audio):
     max = np.amax(audio);  # Find the maximum value
     dB = audio  # Make copy of audio array for processing
     for index in range(len(audio)):
-        dB[index] = 20*log10(audio[index]) #Calculate decibel with max as ref
+        dB[index] = 20*log10(audio[index]) # Calculate decibel with max as ref
     return dB
 
 def simplify_signal(inputSignal):
@@ -48,7 +48,8 @@ def simplify_signal(inputSignal):
             simpleAudio = np.append(simpleAudio,inputSignal[i])
             x+=0.25  # x values are fixed at every 0.25 inches
             x_vals = np.append(x_vals,x)
-    # Scale amplitude by a factor of 5 so that graph will be at least 5 in high
+
+    # Scale amplitude by a factor of 5 so that graph will be at least 5in high
     max = np.amax(simpleAudio)
     scaling = 5/max
     simpleAudio = simpleAudio*scaling
@@ -79,8 +80,7 @@ def audio_main():
     """Main function that encompasses all audio processing"""
     audio = record_audio(2,4410)  #  Record two seconds of audio at 4410 Hz
     abs = np.absolute(audio)  # Take abosulte value of each element
-    #envelope = running_mean(abs, 200)  # Calculate the running average to get the envelope
-    envelope = peak_detection(abs)  # Running peak detection
+    envelope = peak_detection(abs)  # Running peak detection to obtain envelope
     processed_audio = simplify_signal(envelope)  # Simplify signal by removing data points
 
     plot_signal(audio,'original_sound')
