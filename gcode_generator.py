@@ -48,21 +48,20 @@ def main(mode,array=None):
     """Main function of the program.
     mode = 'sound', 'face', or 'demo'
     array = numpy array conatining x,y coordinates to be plotted"""
-    g_code = []     # List to hold g-code commands
+    g_code = []
+    g_code.append('G20 G90')     # List to hold g-code commands
     if mode == 'demo':
         with open('demo.txt') as f: # Read demo g_code from file, remove '\n'
-            g_code = f.read().splitlines()
+            g_code += f.read().splitlines()
     elif mode == 'sound':
-        g_code = line_image(array)
+        g_code += line_image(array)
     elif mode == 'face':
-        g_code = dot_image(array)
+        g_code == dot_image(array)
+    g_code.append('M02')
 
     # Print the g_code to a text file
     f = open('gcode.txt', 'w')  #
-    f.write('%' + mode + '\n')
-    f.write('G20 G90\n')
     for i in g_code:
         f.write(str(i) + '\n')
-    f.write('M02\n%\n')
     f.close()
     return g_code
