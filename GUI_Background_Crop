@@ -12,6 +12,8 @@ import dlib
 import numpy as np
 from numpy import newaxis
 import matplotlib.pyplot as plt
+import audio_processing
+import gcode_generator
 
 class App:
     def __init__(self, window, window_title, video_source=0):
@@ -38,7 +40,7 @@ class App:
         self.btn_capture.pack(side=tk.LEFT)
 
         #Record Audio Button
-        self.btn_record=tk.Button(self.frame, text="Listen",bg = "blue",fg = "white",width = 25, height = 2, command = self.send_g_code)
+        self.btn_record=tk.Button(self.frame, text="Listen",bg = "blue",fg = "white",width = 25, height = 2, command = self.audio_recording)
         self.btn_record.pack(side=tk.LEFT)
         self.frame.pack()
 
@@ -64,6 +66,10 @@ class App:
         self.update()
 
         self.window.mainloop()
+
+    def audio_recording(self):
+        my_audio = audio_processing.audio_main()
+        g_code = gcode_generator.main('sound',my_audio)
 
     def clear_entry(self):
         self.text_entry.delete(0,'end')
