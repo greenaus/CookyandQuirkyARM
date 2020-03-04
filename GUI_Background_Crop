@@ -133,6 +133,10 @@ class App:
                     y_array = np.append(y_array,array[coord][j])
         return y_array
 
+    def thin_array(self, array):
+        array[1::5]
+        return array
+
 
 
     def capture(self):
@@ -176,12 +180,23 @@ class App:
                     cv2.imwrite("output"+".jpg",blank_image2)
 
                     coords = np.argwhere(blank_image2 == 255)
+#                    thin_array = self.thin_array(coords)
+#                    print(thin_array)
+
                     x_array = self.sort_x(coords)
                     y_array = self.sort_y(coords)
+                    # x_array[1::5]
+                    # y_array[1::5]
+
+                    x_array = [arr for i,arr in enumerate(x_array) if i % 5 == 0]
+                    y_array = [arr for i,arr in enumerate(y_array) if i % 5 == 0]
+                    coord_array = np.column_stack((x_array,y_array))
                     print(x_array)
-                    print(y_array)
-                    plt.plot(x_array,y_array,"b,")
-                    plt.show()
+#                    print(x_array)
+#                    print(y_array)
+#                    plt.plot(x_array,y_array,"ro")
+#                    plt.show()
+                    g_code = gcode_generator.main('face',coord_array)
 
     def update(self):
 

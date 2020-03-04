@@ -32,7 +32,7 @@ def choose_type():
 def dot_image(array):
     """Generate g-code for a dot image from an array"""
     g_code = []
-    for i in range(np.size(array,axis=0)):
+    for i in range(0,np.size(array,axis=0)):
         g_code.append('G00 X' + str(array[i,0]) + ' Y' + str(array[i,1]) + ' Z1.0')
         g_code.append('G00 X' + str(array[i,0]) + ' Y' + str(array[i,1]) + ' Z0.0')
     return g_code
@@ -56,7 +56,7 @@ def main(mode,array=None):
     elif mode == 'sound':
         g_code += line_image(array)
     elif mode == 'face':
-        g_code == dot_image(array)
+        g_code += dot_image(array)
     g_code.append('M02')
 
     # Print the g_code to a text file
