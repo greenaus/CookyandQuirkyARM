@@ -24,9 +24,9 @@ def send_code(g_code = None):
         ser.write((i + '\n').encode('utf-8'))
         time.sleep(0.5)
         while ser.in_waiting:
-            print(ser.readline().decode('ascii'))
-    while ser.in_waiting:
-        print(ser.readline().decode('ascii'))
+            print(ser.readline())
+    # while ser.in_waiting:
+    #     print(ser.readline().decode('ascii'))
 
     return
 
