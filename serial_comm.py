@@ -9,7 +9,7 @@ import gcode_generator
 import numpy as np
 
 def initalize():
-    ser = serial.Serial('COM6', baudrate = 115200, timeout = 1)
+    ser = serial.Serial('COM5', baudrate = 115200, timeout = 1)
     time.sleep(3)
     ser.reset_input_buffer()
     # ser.write(b'%')
@@ -25,6 +25,8 @@ def send_code(g_code = None):
         time.sleep(0.5)
         while ser.in_waiting:
             print(ser.readline().decode('ascii'))
+    while ser.in_waiting:
+        print(ser.readline().decode('ascii'))
 
     return
 

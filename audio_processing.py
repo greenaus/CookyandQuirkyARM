@@ -38,21 +38,22 @@ def dB_calculate(audio):
 
 def simplify_signal(inputSignal):
     """Remove data points to simplify signal"""
-    simpleAudio = np.array(0)  # Array to hold simplified signal
+    simpleAudio = np.array(inputSignal[0])  # Array to hold simplified signal
     x = 0
     x_vals = np.array((x))  # Array to hold x values to be plotted
 
     #Take one data point for every 0.1 seconds
-    for i in range(len(inputSignal)):
-        if i % 441 == 0:
+    for i in range(1,len(inputSignal)):
+        if i % 44 == 0:
             simpleAudio = np.append(simpleAudio,inputSignal[i])
-            x+=0.25  # x values are fixed at every 0.25 inches
+            x+=1
             x_vals = np.append(x_vals,x)
 
-    # Scale amplitude by a factor of 5 so that graph will be at least 5in high
-    max = np.amax(simpleAudio)
-    scaling = 5/max
-    simpleAudio = simpleAudio*scaling
+    # # Scale amplitude by a factor of 5 so that graph will be at least 5in high
+    # max = np.amax(simpleAudio)
+    # scaling = 5/max
+    # simpleAudio = simpleAudio*scaling
+    # simpleAudio += 2
 
     outputSignal = np.column_stack((x_vals,simpleAudio)) # Concatenate x and y values
     return outputSignal
@@ -84,7 +85,5 @@ def audio_main():
     processed_audio = simplify_signal(envelope)  # Simplify signal by removing data points
 
     plot_signal(audio,'original_sound')
-    plot_signal(envelope,"envelope")
-    plot_signal(processed_audio[:,1],'processed_sound')
 
     return processed_audio
