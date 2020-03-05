@@ -14,6 +14,7 @@ from numpy import newaxis
 import matplotlib.pyplot as plt
 import audio_processing
 import gcode_generator
+import serial
 
 class App:
     def __init__(self, window, window_title, video_source=0):
@@ -25,6 +26,17 @@ class App:
         self.detector = dlib.get_frontal_face_detector()
         self.predictor = dlib.shape_predictor(self.landmark_model)
         self.G_Code = tk.StringVar()
+
+#~~~~~~~~~~~~~~
+        self.ser = serial.Serial('COM4', baudrate = 115200, timeout = 1)
+        time.sleep(3)
+        self.ser.reset_input_buffer()
+        # ser.write(b'%')
+        # time.sleep(1)
+        arduinoData = self.ser.readline().decode('ascii')
+        print(arduinoData)
+#~~~~~~~~~~~~~~
+
 #        self.fa = FaceAligner(self.predictor, desiredFaceWidth=256)
         self.frame = tk.Frame(self.window)
 
@@ -57,8 +69,13 @@ class App:
         self.text_entry=ttk.Entry(self.frame2,textvariable = self.G_Code)
         self.text_entry.pack(side=tk.LEFT)
 
+        self.btn_demo = tk.Button(self.frame2, text = 'DEMO', bg = "green", fg = "white", width = 25, height = 2, command = self.demo)
+        self.btn_demo.pack(side = tk.RIGHT)
+
         self.btn_send = tk.Button(self.frame2, text = 'SEND',bg = "purple",fg = 'white', width = 25, height = 2, command = self.send_g_code)
         self.btn_send.pack(side = tk.RIGHT)
+
+
 
 
         # After it is called once, the update method will be automatically called every delay milliseconds
@@ -66,6 +83,21 @@ class App:
         self.update()
 
         self.window.mainloop()
+
+
+
+    def send_code(self,g_code = None):
+        """Send g-code line by line over serial port"""
+        for i in g_code:
+            self.ser.write((i + '\n').encode('utf-8'))
+            time.sleep(0.5)
+            while self.ser.in_waiting:
+                print(self.ser.readline().decode('ascii'))
+
+        return
+
+    def demo(self):
+        g_code = gcode_generator.main('demo')
 
     def audio_recording(self):
         my_audio = audio_processing.audio_main()
